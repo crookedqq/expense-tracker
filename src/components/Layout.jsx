@@ -6,12 +6,14 @@ import DashboardIcon from '@mui/icons-material/Dashboard'
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong'
 import InsightsIcon from '@mui/icons-material/Insights'
 import useExpenses from '../hooks/useExpenses'
+import FolderIcon from '@mui/icons-material/Folder'
 
 const DRAWER_WIDTH = 240
 
 const TABS = [
   { label: 'Dashboard', to: '/', icon: <DashboardIcon /> },
   { label: 'Expenses', to: '/expenses', icon: <ReceiptLongIcon /> },
+  { label: 'Events', to: '/events', icon: <FolderIcon /> },
   { label: 'Analysis', to: '/analysis', icon: <InsightsIcon /> },
 ]
 
