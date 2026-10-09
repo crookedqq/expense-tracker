@@ -36,13 +36,13 @@ export default function Events() {
     <Box sx={{ maxWidth: 1100 }}>
       <Stack
         direction="row"
-        justifyContent="space-between"
         alignItems="center"
+        spacing={3}
         sx={{ mb: 4 }}
       >
         <Typography variant="h4">Events</Typography>
 
-        <Button variant="contained" onClick={() => setCreating(true)}>
+        <Button variant="contained" sx={{ borderRadius: 2 }} onClick={() => setCreating(true)}>
           New Event
         </Button>
       </Stack>
@@ -69,31 +69,39 @@ export default function Events() {
                   sx={{ height: '100%', p: 1 }}
                 >
                   <CardContent>
-                    <Stack
-                      direction="row"
-                      justifyContent="space-between"
-                      alignItems="flex-start"
-                      mb={2}
-                    >
                     <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-evenly',
+                        mb: 2,
+                      }}
+                    >
+                      <Box
                         sx={{
-                            width: 64,
-                            height: 64,
-                            borderRadius: 3,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            bgcolor: ev.color ? `${ev.color}15` : 'primary.50',
-                            color: ev.color || 'primary.main',
+                          width: 64,
+                          height: 64,
+                          flexShrink: 0,
+                          borderRadius: 3,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          bgcolor: ev.color ? `${ev.color}15` : 'primary.50',
+                          color: ev.color || 'primary.main',
                         }}
-                        >
+                      >
                         <EventIcon name={ev.icon} size={36} color={ev.color || 'currentColor'} />
-                    </Box>
+                      </Box>
 
-                      <Typography variant="h6" fontWeight={700}>
+                      <Typography
+                        variant="h6"
+                        fontWeight={700}
+                        sx={{ m: 0, lineHeight: 1 }}
+                      >
                         {money(total)}
                       </Typography>
-                    </Stack>
+                    </Box>
 
                     <Typography variant="h6" gutterBottom>
                       {ev.name}
@@ -101,14 +109,14 @@ export default function Events() {
 
                     <Stack direction="row" spacing={1} flexWrap="wrap">
                       <Chip size="small" label={`${items.length} expenses`} />
-
-                      {items.length > 0 && (
-                        <Chip
-                          size="small"
-                          variant="outlined"
-                          label={dateRange(items)}
-                        />
-                      )}
+                      <Chip
+                        size="small"
+                        variant="outlined"
+                        label={items.length > 0 ? dateRange(items) : 'Placeholder - placeholder'}
+                        sx={{
+                          visibility: items.length > 0 ? 'visible' : 'hidden',
+                        }}
+                      />
                     </Stack>
                   </CardContent>
                 </CardActionArea>
