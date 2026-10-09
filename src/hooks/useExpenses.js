@@ -49,13 +49,16 @@ export default function useExpenses() {
     setExpenses((prev) => prev.map((e) => (e.eventId === id ? { ...e, eventId: undefined } : e)))
   }
 
+  const addMany = (list) =>
+    setExpenses((prev) => [...prev, ...list.map((x) => ({ id: crypto.randomUUID(), ...x }))])
+
   // eventId = undefined removes the expenses from whatever event they're in
   const assignToEvent = (ids, eventId) =>
     setExpenses((prev) => prev.map((e) => (ids.includes(e.id) ? { ...e, eventId } : e)))
 
   return {
     expenses: sorted, events, total,
-    addExpense, deleteExpense,
+    addExpense, addMany, deleteExpense,
     addEvent, renameEvent, deleteEvent, assignToEvent,
   }
 }

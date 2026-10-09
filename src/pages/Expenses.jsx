@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import {
   Box, Button, Divider, Menu, MenuItem, Paper, Snackbar, Stack, Typography,
@@ -8,21 +8,39 @@ import ExpenseForm from '../components/ExpenseForm'
 import ExpenseList from '../components/ExpenseList'
 import EventNameDialog from '../components/EventNameDialog'
 import { allCategories } from '../utils/format'
+import UploadFileIcon from '@mui/icons-material/UploadFile'
+import ImportDialog from '../components/ImportDialog'
+import { parseCSV, toExpense } from '../utils/csv'
 
 
 const plural = (n) => `${n} expense${n === 1 ? '' : 's'}`
 
 export default function Expenses() {
-  const { expenses, events, addExpense, deleteExpense, addEvent, assignToEvent } = useOutletContext()
+  const { expenses, events, addExpense, addMany, deleteExpense, addEvent, assignToEvent } = useOutletContext()
   const [selected, setSelected] = useState([])
   const [anchor, setAnchor] = useState(null)
   const [creating, setCreating] = useState(false)
   const [toast, setToast] = useState('')
+  const fileRef = useRef()
+  const [importRows, setImportRows] = useState(null)
 
   // ignore ids of expenses that have since been deleted
   const selectedIds = expenses.filter((e) => selected.includes(e.id)).map((e) => e.id)
   const anyInEvent = expenses.some((e) => selectedIds.includes(e.id) && e.eventId)
   const allSelected = expenses.length > 0 && selectedIds.length === expenses.length
+
+  async function handleFile(e) {
+    const file = e.target.files[0]
+    e.target.value = '' // lets you pick the same file again later
+    if (!file) return
+    setImportRows(parseCSV(await file.text()))
+  }
+
+  function handleImport(items) {
+    addMany(items.map(toExpense))
+    setImportRows(null)
+    setToast(`Imported ${items.length} expense${items.length === 1 ? '' : 's'}`)
+  }
 
   const toggle = (id) =>
     setSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
@@ -53,7 +71,13 @@ export default function Expenses() {
 
   return (
     <>
-      <Typography variant="h4" component="h1" sx={{ mb: 3 }}>Expenses</Typography>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={3} sx={{ mb: 3 }}>
+        <Typography variant="h4" component="h1">Expenses</Typography>
+        <Button variant="outlined" startIcon={<UploadFileIcon />} onClick={() => fileRef.current.click()}>
+          Import CSV
+        </Button>
+        <input ref={fileRef} type="file" accept=".csv,text/csv" hidden onChange={handleFile} />
+      </Stack>
       <Box
         sx={{
           display: 'grid',
@@ -118,6 +142,14 @@ export default function Expenses() {
 
       {creating && (
         <EventNameDialog title="New event" onClose={() => setCreating(false)} onSave={createAndMove} />
+      )}
+      {importRows && (
+        <ImportDialog
+          rows={importRows}
+          existing={expenses}
+          onClose={() => setImportRows(null)}
+          onImport={handleImport}
+        />
       )}
 
       <Snackbar open={Boolean(toast)} autoHideDuration={3000} onClose={() => setToast('')} message={toast} />
