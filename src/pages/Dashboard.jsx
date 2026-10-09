@@ -28,7 +28,7 @@ export default function Dashboard() {
     <>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2, gap:2 }}>
         <Typography variant="h4" component="h1">Dashboard</Typography>
-        <Button component={RouterLink} to="/expenses" variant="contained">Add expense</Button>
+        <Button component={RouterLink} to="/expenses" variant="contained" sx={{borderRadius: 2}}>Add expense</Button>
       </Stack>
 
       <Box
@@ -55,27 +55,20 @@ export default function Dashboard() {
         <Typography variant="h6" component="h2">Recent purchases</Typography>
         <Button component={RouterLink} to="/expenses" size="small">View all</Button>
       </Stack>
-      <Paper sx={{ mt: 1 }}>
-        <List>
-          {recent.map((e) => (
-            <ListItem key={e.id} divider>
-              <ListItemText
-                primary={`${nameOf(e)}: ${money(e.amount)}`}
-                secondary={
-                  <Box component="span" sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
-                    <Chip label={e.category || 'Other'} size="small" />
-                    {formatDate(e.date)}
-                  </Box>
-                }
-                slotProps={{ secondary: { component: 'div' } }}
-              />
-            </ListItem>
-          ))}
-          {recent.length === 0 && (
-            <ListItem><ListItemText secondary="Nothing yet. Add your first expense." /></ListItem>
-          )}
-        </List>
-      </Paper>
+      <Stack spacing={1} sx={{ mt: 1 }}>
+        {recent.map((e) => (
+          <Paper key={e.id} sx={{ p: 2 }}>
+            <Typography>{nameOf(e)}: {money(e.amount)}</Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
+              <Chip label={e.category || 'Other'} size="small" />
+              <Typography variant="body2" color="text.secondary">{formatDate(e.date)}</Typography>
+            </Box>
+          </Paper>
+        ))}
+        {recent.length === 0 && (
+          <Typography color="text.secondary">Nothing yet. Add your first expense.</Typography>
+        )}
+      </Stack>
     </>
   )
 }

@@ -50,7 +50,7 @@ export default function Layout() {
         </List>
       </Drawer>
 
-      <Box component="main" sx={{ flexGrow: 1, p: 4, overflowY: 'auto', bgcolor: 'grey.100' }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 4, overflowY: 'auto', bgcolor: 'background.default' }}>
         <Outlet context={data} />
       </Box>
     </Box>

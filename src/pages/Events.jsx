@@ -13,7 +13,6 @@ import {
 } from '@mui/material'
 
 import EventIcon from '../components/EventIcon'
-
 import EventNameDialog from '../components/EventNameDialog'
 import { formatDate, money } from '../utils/format'
 
