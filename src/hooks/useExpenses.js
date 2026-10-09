@@ -29,16 +29,16 @@ export default function useExpenses() {
   const deleteExpense = (id) =>
     setExpenses((prev) => prev.filter((e) => e.id !== id))
 
-  const addEvent = (name, icon = 'flight') => {
+  const addEvent = (name, icon = 'flight', color = '#0288d1') => {
     const id = crypto.randomUUID()
-    setEvents((prev) => [...prev, { id, name: name.trim(), icon }])
+    setEvents((prev) => [...prev, { id, name: name.trim(), icon, color }])
     return id
   }
 
-  const renameEvent = (id, name, icon) => {
+  const renameEvent = (id, name, icon, color) => {
     setEvents((prev) =>
       prev.map((ev) =>
-        ev.id === id ? { ...ev, name: name.trim(), icon: icon ?? ev.icon } : ev
+        ev.id === id ? { ...ev, name: name.trim(), icon, color } : ev
       )
     )
   }

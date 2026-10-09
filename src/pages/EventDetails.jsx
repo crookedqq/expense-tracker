@@ -15,39 +15,16 @@ import {
   ArrowLeft,
   Trash2,
   Pencil,
-  Plane,
-  Ticket,
-  Martini,
-  Utensils,
-  House,
-  Car,
-  ShoppingBag,
-  Gamepad2,
-  Briefcase,
-  MicVocal,
-  Folder,
 } from 'lucide-react'
 
+import EventIcon from '../components/EventIcon'
 import EventNameDialog from '../components/EventNameDialog'
 import { formatDate, money, nameOf } from '../utils/format'
 import { useState } from 'react'
 
-const eventIcons = {
-  flight: Plane,
-  ticket: Ticket,
-  drink: Martini,
-  food: Utensils,
-  home: House,
-  car: Car,
-  shopping: ShoppingBag,
-  gaming: Gamepad2,
-  work: Briefcase,
-  mic: MicVocal,
-}
-
 function dateRange(items) {
   const dates = items
-    .map((e) => e.date)
+    .map((ev) => ev.date)
     .filter(Boolean)
     .sort()
 
@@ -72,9 +49,9 @@ export default function EventDetails() {
 
   const [renaming, setRenaming] = useState(false)
 
-  const event = events.find((ev) => String(ev.id) === String(eventId))
+  const ev = events.find((ev) => String(ev.id) === String(eventId))
 
-  if (!event) {
+  if (!ev) {
     return (
       <Box>
         <Typography variant="h5">Event not found</Typography>
@@ -91,11 +68,9 @@ export default function EventDetails() {
     )
   }
 
-  const items = expenses.filter((e) => e.eventId === event.id)
+  const items = expenses.filter((e) => e.eventId === ev.id)
 
   const total = items.reduce((sum, e) => sum + e.amount, 0)
-
-  const EventIcon = eventIcons[event.icon] || Folder
 
   function handleDelete() {
     const note =
@@ -105,8 +80,8 @@ export default function EventDetails() {
           } will be kept, just ungrouped.`
         : ''
 
-    if (window.confirm(`Delete the event "${event.name}"?${note}`)) {
-      deleteEvent(event.id)
+    if (window.confirm(`Delete the event "${ev.name}"?${note}`)) {
+      deleteEvent(ev.id)
     }
   }
 
@@ -124,23 +99,23 @@ export default function EventDetails() {
       {/* Event header */}
       <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 4 }}>
         <Box
-          sx={{
+        sx={{
             width: 64,
             height: 64,
             borderRadius: 3,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            bgcolor: 'primary.50',
-            color: 'primary.main',
-          }}
+            bgcolor: ev.color ? `${ev.color}15` : 'primary.50',
+            color: ev.color || 'primary.main',
+        }}
         >
-          <EventIcon size={36} />
+            <EventIcon name={ev.icon} size={36} color={ev.color || 'currentColor'} />
         </Box>
 
         <Box sx={{ flexGrow: 1 }}>
           <Typography variant="h4" component="h1">
-            {event.name}
+            {ev.name}
           </Typography>
 
           <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
@@ -188,7 +163,7 @@ export default function EventDetails() {
             secondaryAction={
               <IconButton
                 edge="end"
-                aria-label={`Remove ${nameOf(e)} from ${event.name}`}
+                aria-label={`Remove ${nameOf(e)} from ${ev.name}`}
                 onClick={() => assignToEvent([e.id], undefined)}
               >
                 <Trash2 size={18} />
@@ -226,18 +201,19 @@ export default function EventDetails() {
         </Button>
       </Stack>
 
-      {renaming && (
-        <EventNameDialog
-          title="Edit event"
-          initial={event.name}
-          initialIcon={event.icon}
-          onClose={() => setRenaming(false)}
-          onSave={(name, icon) => {
-            renameEvent(event.id, name, icon)
-            setRenaming(false)
-          }}
-        />
-      )}
+    {renaming && (
+    <EventNameDialog
+        title="Edit event"
+        initial={ev.name}
+        initialIcon={ev.icon}
+        initialColor={ev.color}
+        onClose={() => setRenaming(false)}
+        onSave={(name, icon, color) => {
+        renameEvent(ev.id, name, icon, color)
+        setRenaming(false)
+        }}
+    />
+    )}
     </Box>
   )
 }

@@ -12,35 +12,10 @@ import {
   Typography,
 } from '@mui/material'
 
-import {
-  Plane,
-  Ticket,
-  Martini,
-  Utensils,
-  House,
-  Car,
-  ShoppingBag,
-  Gamepad2,
-  Briefcase,
-  MicVocal,
-  Folder,
-} from 'lucide-react'
+import EventIcon from '../components/EventIcon'
 
 import EventNameDialog from '../components/EventNameDialog'
 import { formatDate, money } from '../utils/format'
-
-const eventIcons = {
-  flight: Plane,
-  ticket: Ticket,
-  drink: Martini,
-  food: Utensils,
-  home: House,
-  car: Car,
-  shopping: ShoppingBag,
-  gaming: Gamepad2,
-  work: Briefcase,
-  mic: MicVocal,
-}
 
 function dateRange(items) {
   const dates = items.map((e) => e.date).filter(Boolean).sort()
@@ -55,6 +30,7 @@ function dateRange(items) {
 
 export default function Events() {
   const { expenses, events, addEvent } = useOutletContext()
+
   const [creating, setCreating] = useState(false)
 
   return (
@@ -82,8 +58,8 @@ export default function Events() {
       <Grid container spacing={2}>
         {events.map((ev) => {
           const items = expenses.filter((e) => e.eventId === ev.id)
+
           const total = items.reduce((sum, e) => sum + e.amount, 0)
-          const EventIcon = eventIcons[ev.icon] || Folder
 
           return (
             <Grid item xs={12} sm={6} md={4} key={ev.id}>
@@ -100,20 +76,20 @@ export default function Events() {
                       alignItems="flex-start"
                       mb={2}
                     >
-                      <Box
+                    <Box
                         sx={{
-                          width: 52,
-                          height: 52,
-                          borderRadius: 3,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          bgcolor: 'primary.50',
-                          color: 'primary.main',
+                            width: 64,
+                            height: 64,
+                            borderRadius: 3,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            bgcolor: ev.color ? `${ev.color}15` : 'primary.50',
+                            color: ev.color || 'primary.main',
                         }}
-                      >
-                        <EventIcon size={24} />
-                      </Box>
+                        >
+                        <EventIcon name={ev.icon} size={36} color={ev.color || 'currentColor'} />
+                    </Box>
 
                       <Typography variant="h6" fontWeight={700}>
                         {money(total)}
@@ -147,8 +123,8 @@ export default function Events() {
         <EventNameDialog
           title="New event"
           onClose={() => setCreating(false)}
-          onSave={(name, icon) => {
-            addEvent(name, icon)
+          onSave={(name, icon, color) => {
+            addEvent(name, icon, color)
             setCreating(false)
           }}
         />
