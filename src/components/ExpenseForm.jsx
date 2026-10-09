@@ -1,14 +1,15 @@
 import { useId, useState } from 'react'
 import {
-  Button, FormControl, FormHelperText, InputAdornment, InputLabel, MenuItem,
+  Button, FormControl, FormHelperText, InputAdornment, InputLabel, Autocomplete,
   OutlinedInput, Paper, Stack, TextField,
 } from '@mui/material'
-import { CATEGORIES, todayString } from '../utils/format'
+import { normaliseTags, todayString } from '../utils/format'
+import TagChip from './TagChips'
 
-export default function ExpenseForm({ onAdd }) {
+export default function ExpenseForm({ onAdd, categoryOptions }) {
   const [expName, setExpName] = useState('')
   const [amount, setAmount] = useState('')
-  const [category, setCategory] = useState('')
+  const [categories, setCategories] = useState([])
   const [date, setDate] = useState(todayString)
   const [errors, setErrors] = useState({})
   const amountId = useId()
@@ -19,7 +20,7 @@ export default function ExpenseForm({ onAdd }) {
     const value = parseFloat(amount)
     if (!amount) found.amount = 'Please enter an amount'
     else if (!(value > 0)) found.amount = 'Amount must be greater than 0'
-    if (!category) found.category = 'Please choose a category'
+    if (categories.length === 0) found.categories = 'Pick or create at least one category'
     if (!date) found.date = 'Please pick a date'
     return found
   }
@@ -34,10 +35,10 @@ export default function ExpenseForm({ onAdd }) {
     setErrors(found)
     if (Object.keys(found).length > 0) return
 
-    onAdd({ expName: expName.trim(), amount: parseFloat(amount), category, date })
+    onAdd({ expName: expName.trim(), amount: parseFloat(amount), categories, date })
     setExpName('')
     setAmount('')
-    setCategory('')
+    setCategories([])
   }
 
   return (
@@ -53,8 +54,8 @@ export default function ExpenseForm({ onAdd }) {
           error={Boolean(errors.expName)}
           helperText={errors.expName}
         />
-        <Stack direction="row" spacing={2} alignItems="flex-start">
-          <FormControl fullWidth error={Boolean(errors.amount)}>
+        <Stack direction="row" pacing={2} alignItems="flex-start">
+          <FormControl sx={{ width: 1/2 }} error={Boolean(errors.amount)}>
             <InputLabel htmlFor={amountId}>Amount</InputLabel>
             <OutlinedInput
               id={amountId}
@@ -70,22 +71,33 @@ export default function ExpenseForm({ onAdd }) {
             />
             {errors.amount && <FormHelperText>{errors.amount}</FormHelperText>}
           </FormControl>
-          <TextField
-            label="Category"
-            select
-            value={category}
-            onChange={(e) => {
-              setCategory(e.target.value)
-              clearError('category')
+          <Autocomplete
+            multiple
+            freeSolo
+            autoHighlight
+            filterSelectedOptions
+            options={categoryOptions}
+            value={categories}
+            onChange={(_, value) => {
+              setCategories(normaliseTags(value, categoryOptions))
+              clearError('categories')
             }}
-            error={Boolean(errors.category)}
-            helperText={errors.category}
-            fullWidth
-          >
-            {CATEGORIES.map((c) => (
-              <MenuItem key={c} value={c}>{c}</MenuItem>
-            ))}
-          </TextField>
+            renderValue={(value, getItemProps) =>
+              value.map((option, index) => {
+                const { key, ...itemProps } = getItemProps({ index })
+                return <TagChip key={key} label={option} {...itemProps} />
+              })
+            }
+            renderInput={(params) => (
+              <TextField sx={{ width: 200 }}
+                {...params}
+                label="Categories"
+                placeholder="Pick one, or type and press Enter to create"
+                error={Boolean(errors.categories)}
+                helperText={errors.categories}
+              />
+            )}
+          />
         </Stack>
         <TextField
           label="Date"

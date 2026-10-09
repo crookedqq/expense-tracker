@@ -7,6 +7,8 @@ import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
 import ExpenseForm from '../components/ExpenseForm'
 import ExpenseList from '../components/ExpenseList'
 import EventNameDialog from '../components/EventNameDialog'
+import { allCategories } from '../utils/format'
+
 
 const plural = (n) => `${n} expense${n === 1 ? '' : 's'}`
 
@@ -60,7 +62,7 @@ export default function Expenses() {
           gridTemplateColumns: { xs: '1fr', lg: '380px 1fr' },
         }}
       >
-        <ExpenseForm onAdd={addExpense} />
+        <ExpenseForm onAdd={addExpense} categoryOptions={allCategories(expenses)} />
 
         <Box>
           {selectedIds.length > 0 && (

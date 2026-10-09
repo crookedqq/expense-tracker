@@ -1,8 +1,12 @@
+import { categoriesOf } from './format'
+
 export function totalsByCategory(expenses) {
   const totals = {}
   expenses.forEach((e) => {
-    const c = e.category || 'Other'
-    totals[c] = (totals[c] ?? 0) + e.amount
+    const cats = categoriesOf(e)
+    cats.forEach((c) => {
+      totals[c] = (totals[c] ?? 0) + e.amount / cats.length
+    })
   })
   return Object.entries(totals)
     .map(([name, value]) => ({ name, value }))
