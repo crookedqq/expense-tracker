@@ -22,6 +22,10 @@ export const allCategories = (expenses) => [
   ...new Set([...CATEGORIES, ...expenses.flatMap(categoriesOf)]),
 ]
 
+export const categoryOptionsFrom = (expenses) => [
+  ...new Set([...CATEGORIES, ...expenses.map((e) => e.category).filter(Boolean)]),
+]
+
 // Trims, drops blanks, and treats "food" and "Food" as the same tag
 export const normaliseTags = (values, options) => {
   const seen = new Set()

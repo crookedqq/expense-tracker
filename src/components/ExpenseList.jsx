@@ -1,12 +1,13 @@
 import {
   Box, Checkbox, Chip, IconButton, List, ListItem, ListItemButton,
-  ListItemIcon, ListItemText, Paper,
+  ListItemIcon, ListItemText, Paper, Stack
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 import FolderIcon from '@mui/icons-material/Folder'
+import EditIcon from '@mui/icons-material/Edit'
 import { formatDate, nameOf } from '../utils/format'
 
-export default function ExpenseList({ expenses, events, selected, onToggle, onToggleAll, onDelete }) {
+export default function ExpenseList({ expenses, events, selected, onToggle, onToggleAll, onEdit, onDelete }) {
   const eventName = (e) => events.find((ev) => ev.id === e.eventId)?.name
   const allSelected = expenses.length > 0 && expenses.every((e) => selected.includes(e.id))
   const someSelected = expenses.some((e) => selected.includes(e.id))
@@ -37,10 +38,16 @@ export default function ExpenseList({ expenses, events, selected, onToggle, onTo
             key={e.id}
             divider
             disablePadding
+            sx={{ '& .MuiListItemButton-root': { pr: 12 } }}
             secondaryAction={
-              <IconButton edge="end" aria-label={`Delete ${nameOf(e)}`} onClick={() => onDelete(e.id)}>
-                <DeleteIcon />
-              </IconButton>
+              <Stack direction="row">
+                <IconButton aria-label={`Edit ${nameOf(e)}`} onClick={() => onEdit(e)}>
+                  <EditIcon />
+                </IconButton>
+                <IconButton edge="end" aria-label={`Delete ${nameOf(e)}`} onClick={() => onDelete(e.id)}>
+                  <DeleteIcon />
+                </IconButton>
+              </Stack>
             }
           >
             <ListItemButton onClick={() => onToggle(e.id)} dense>

@@ -43,6 +43,9 @@ export default function useExpenses() {
     )
   }
 
+  const updateExpense = (id, changes) =>
+    setExpenses((prev) => prev.map((e) => (e.id === id ? { ...e, ...changes } : e)))
+
   // deleting an event keeps its expenses, they just become ungrouped
   const deleteEvent = (id) => {
     setEvents((prev) => prev.filter((ev) => ev.id !== id))
@@ -60,5 +63,6 @@ export default function useExpenses() {
     expenses: sorted, events, total,
     addExpense, addMany, deleteExpense,
     addEvent, renameEvent, deleteEvent, assignToEvent,
+    updateExpense
   }
 }

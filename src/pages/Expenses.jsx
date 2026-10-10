@@ -7,22 +7,24 @@ import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
 import ExpenseForm from '../components/ExpenseForm'
 import ExpenseList from '../components/ExpenseList'
 import EventNameDialog from '../components/EventNameDialog'
-import { allCategories } from '../utils/format'
+import { allCategories, categoryOptionsFrom } from '../utils/format'
 import UploadFileIcon from '@mui/icons-material/UploadFile'
 import ImportDialog from '../components/ImportDialog'
 import { parseCSV, toExpense } from '../utils/csv'
+import EditExpenseDialog from '../components/EditExpenseDialog'
 
 
 const plural = (n) => `${n} expense${n === 1 ? '' : 's'}`
 
 export default function Expenses() {
-  const { expenses, events, addExpense, addMany, deleteExpense, addEvent, assignToEvent } = useOutletContext()
+  const { expenses, events, addExpense, addMany, deleteExpense, addEvent, assignToEvent, updateExpense } = useOutletContext()
   const [selected, setSelected] = useState([])
   const [anchor, setAnchor] = useState(null)
   const [creating, setCreating] = useState(false)
   const [toast, setToast] = useState('')
   const fileRef = useRef()
   const [importRows, setImportRows] = useState(null)
+  const [editing, setEditing] = useState(null)
 
   // ignore ids of expenses that have since been deleted
   const selectedIds = expenses.filter((e) => selected.includes(e.id)).map((e) => e.id)
@@ -116,6 +118,7 @@ export default function Expenses() {
             onToggle={toggle}
             onToggleAll={toggleAll}
             onDelete={deleteExpense}
+            onEdit={setEditing}
           />
         </Box>
       </Box>
@@ -143,12 +146,26 @@ export default function Expenses() {
       {creating && (
         <EventNameDialog title="New event" onClose={() => setCreating(false)} onSave={createAndMove} />
       )}
+
       {importRows && (
         <ImportDialog
           rows={importRows}
           existing={expenses}
           onClose={() => setImportRows(null)}
           onImport={handleImport}
+        />
+      )}
+
+      {editing && (
+        <EditExpenseDialog
+          expense={editing}
+          categoryOptions={categoryOptionsFrom(expenses)}
+          onClose={() => setEditing(null)}
+          onSave={(id, changes) => {
+            updateExpense(id, changes)
+            setEditing(null)
+            setToast('Expense updated')
+          }}
         />
       )}
 
