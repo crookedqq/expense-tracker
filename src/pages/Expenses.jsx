@@ -44,6 +44,13 @@ export default function Expenses() {
     setToast(`Imported ${items.length} expense${items.length === 1 ? '' : 's'}`)
   }
 
+  function createAndMove(name, icon, color) {
+    const id = addEvent(name, icon, color)
+    assignToEvent(selectedIds, id)
+    setCreating(false)
+    finish(`Added ${plural(selectedIds.length)} to "${name}"`)
+  }
+
   const toggle = (id) =>
     setSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
   const toggleAll = () => setSelected(allSelected ? [] : expenses.map((e) => e.id))
