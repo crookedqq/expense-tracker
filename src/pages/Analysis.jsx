@@ -63,7 +63,7 @@ export default function Analysis() {
         </List>
       </Paper>
 
-      <ServerInsights expenses={expenses} />
+      {/* <ServerInsights expenses={expenses} /> */}
 
       <Paper sx={{ p: 2, mb: 3 }}>
         <Typography variant="h6" component="h2">Spending by category</Typography>
