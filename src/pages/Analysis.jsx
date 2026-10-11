@@ -8,6 +8,7 @@ import { money, nameOf } from '../utils/format'
 import {
   currentMonthKey, totalForMonth, totalsByCategory, totalsByMonth,
 } from '../utils/stats'
+import ServerInsights from '../components/ExtraInsights'
 
 const COLORS = ['#a78bfa', '#e07a5f', '#2e7d32', '#f2cc8f', '#60a5fa', '#78909c']
 
@@ -61,6 +62,8 @@ export default function Analysis() {
           ))}
         </List>
       </Paper>
+
+      <ServerInsights expenses={expenses} />
 
       <Paper sx={{ p: 2, mb: 3 }}>
         <Typography variant="h6" component="h2">Spending by category</Typography>
